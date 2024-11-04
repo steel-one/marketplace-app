@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { FastifyInstance } from 'fastify';
 import Redis from 'ioredis';
+import { authenticate } from '../utils/authenticate';
 
 const redis = new Redis({
   host: process.env.REDIS_HOST || 'localhost',
@@ -9,6 +10,9 @@ const redis = new Redis({
 
 export default async function itemRoutes(fastify: FastifyInstance) {
   fastify.get('/items', async (request, reply) => {
+    const user = await authenticate(request, reply);
+    if (!user) return;
+
     const cachedItems = await redis.get('items');
     if (cachedItems) {
       return JSON.parse(cachedItems);

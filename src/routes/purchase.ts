@@ -1,17 +1,21 @@
 import { FastifyInstance } from 'fastify';
 import sql from '../db';
+import { authenticate } from '../utils/authenticate';
 
 export default async function purchaseRoutes(fastify: FastifyInstance) {
   fastify.post('/purchase', async (request, reply) => {
+    const user = await authenticate(request, reply);
+    if (!user) return;
+
     const { userId, itemId } = request.body as {
       userId: number;
       itemId: number;
     };
 
-    const [user] = await sql`SELECT * FROM users WHERE id = ${userId}`;
+    const [dbUser] = await sql`SELECT * FROM users WHERE id = ${userId}`;
     const [item] = await sql`SELECT * FROM items WHERE id = ${itemId}`;
 
-    if (!user || !item || user.balance < item.tradable_price) {
+    if (!dbUser || !item || dbUser.balance < item.tradable_price) {
       return reply
         .status(400)
         .send({ error: 'Insufficient balance or invalid item' });
