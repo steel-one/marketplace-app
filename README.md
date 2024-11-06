@@ -26,6 +26,12 @@ $ npm run start:dev
 $ npm run start
 ```
 
+## To run jest tests
+
+```bash
+$ npx jest
+```
+
 ## Endpoints usage examples
 
 GET
