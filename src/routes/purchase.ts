@@ -7,15 +7,15 @@ export default async function purchaseRoutes(fastify: FastifyInstance) {
     const user = await authenticate(request, reply);
     if (!user) return;
 
-    const { userId, itemId } = request.body as {
+    const { userId, itemId, price } = request.body as {
       userId: number;
       itemId: number;
+      price: number;
     };
 
     const [dbUser] = await sql`SELECT * FROM users WHERE id = ${userId}`;
-    const [item] = await sql`SELECT * FROM items WHERE id = ${itemId}`;
 
-    if (!dbUser || !item || dbUser.balance < item.tradable_price) {
+    if (!dbUser || !price || dbUser.balance < price) {
       return reply
         .status(400)
         .send({ error: 'Insufficient balance or invalid item' });
@@ -23,16 +23,18 @@ export default async function purchaseRoutes(fastify: FastifyInstance) {
 
     await sql.begin(async (sql) => {
       await sql`
-                UPDATE users SET balance = balance - ${item.tradable_price} WHERE id = ${userId}
+                UPDATE users SET balance = balance - ${price} WHERE id = ${userId}
             `;
       await sql`
-                INSERT INTO purchases (user_id, item_id, price) VALUES (${userId}, ${itemId}, ${item.tradable_price})
+                INSERT INTO purchases (user_id, item_id, price) VALUES (${userId}, ${itemId}, ${price})
             `;
     });
 
     const [updatedUser] = await sql`
             SELECT balance FROM users WHERE id = ${userId}
         `;
-    return { newBalance: updatedUser.balance };
+    return {
+      balance: updatedUser.balance,
+    };
   });
 }

@@ -5,13 +5,6 @@ CREATE TABLE users (
     balance NUMERIC DEFAULT 0 CHECK (balance >= 0)
 );
 
-CREATE TABLE items (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    tradable_price NUMERIC CHECK (tradable_price >= 0),
-    non_tradable_price NUMERIC CHECK (non_tradable_price >= 0)
-);
-
 CREATE TABLE purchases (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
