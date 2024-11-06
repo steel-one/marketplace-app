@@ -70,7 +70,7 @@ export default async function itemRoutes(fastify: FastifyInstance) {
     ]);
 
     const nonTradableItems = nonTradableResponse.reduce(
-      (acc: Record<string, any>, item: any) => {
+      (acc: Record<string, number>, item: IData) => {
         acc[item.market_hash_name] = item.min_price;
         return acc;
       },
