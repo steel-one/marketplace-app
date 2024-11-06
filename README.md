@@ -1,5 +1,7 @@
 # Pure Fastify/Postgres
 
+(no Nest, no JWT, no ORM)
+
 ## Installation
 
 ```bash
@@ -23,3 +25,25 @@ $ npm run start:dev
 ```bash
 $ npm run start
 ```
+
+## Endpoints usage examples
+
+GET
+http://localhost:3000/items
+
+POST (Auth Basic)
+http://localhost:3000/auth/login
+
+POST (Auth Basic)
+http://localhost:3000/auth/change-password
+{
+"newPassword": "YOUR_PASSWORD"
+}
+
+POST (Auth Basic)
+http://localhost:3000/purchase
+{
+"userId": 1,
+"itemId": 1,
+"price": 5.84
+}
